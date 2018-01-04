@@ -112,6 +112,11 @@ bool Transport::isHostAllowed(const std::string &host) const
   if (host.length() >= 4 && host.substr(0, 4) == std::string("127."))
     return true; // ipv4 localhost
   // now, loop through the list of valid hostnames and see if we find it
+  // for (auto item : allowed_hosts_) {
+  //     if (host == item) {
+  //         return true; 
+  //     } 
+  // }
   for (std::vector<std::string>::const_iterator it = allowed_hosts_.begin(); 
        it != allowed_hosts_.end(); ++it)
   {

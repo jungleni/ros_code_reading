@@ -246,7 +246,7 @@ bool TransportUDP::createIncoming(int port, bool is_server)
     return false;
   }
 
-  server_address_.sin_family = AF_INET;
+  server_address_.sin_family = AF_INET;    // default ipv4
   server_address_.sin_port = htons(port);
   server_address_.sin_addr.s_addr = isOnlyLocalhostAllowed() ? 
                                     htonl(INADDR_LOOPBACK) :

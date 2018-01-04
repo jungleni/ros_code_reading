@@ -45,7 +45,7 @@
 namespace ros
 {
 
-bool TransportTCP::s_use_keepalive_ = true;
+bool TransportTCP::s_use_keepalive_ = true;  // tcp keepalive setsocketopt
 bool TransportTCP::s_use_ipv6_ = false;
 
 TransportTCP::TransportTCP(PollSet* poll_set, int flags)
@@ -96,7 +96,9 @@ bool TransportTCP::initializeSocket()
   {
     return false;
   }
-
+  // idle: 60
+  // interval: 10
+  // count: 9
   setKeepAlive(s_use_keepalive_, 60, 10, 9);
 
   // connect() will set cached_remote_host_ because it already has the host/port available
@@ -442,7 +444,7 @@ void TransportTCP::close()
           poll_set_->delSocket(sock_);
         }
 
-        ::shutdown(sock_, ROS_SOCKETS_SHUT_RDWR);
+        ::shutdown(sock_, ROS_SOCKETS_SHUT_RDWR);  // avoid time_wait
         if ( close_socket(sock_) != 0 )
         {
           ROS_ERROR("Error closing socket [%d]: [%s]", sock_, last_socket_error_string());
