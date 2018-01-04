@@ -79,7 +79,7 @@ bool Header::parse(uint8_t* buffer, uint32_t size, std::string& error_msg)
   while (buf < buffer + size)
   {
     uint32_t len;
-    SROS_DESERIALIZE_PRIMITIVE(buf, len);
+    SROS_DESERIALIZE_PRIMITIVE(buf, len); // copy 4 bytes from buf to len, and buf += 4
 
     if (len > 1000000)
     {
@@ -91,7 +91,7 @@ bool Header::parse(uint8_t* buffer, uint32_t size, std::string& error_msg)
 
     std::string line((char*)buf, len);
 
-    buf += len;
+    buf += len;  // prepare for next loop
 
     //printf(":%s:\n", line.c_str());
     size_t eqpos = line.find_first_of("=", 0);
@@ -138,11 +138,11 @@ void Header::write(const M_string& key_vals, boost::shared_array<uint8_t>& buffe
 
       size += key.length();
       size += value.length();
-      size += 1; // = sign
+      size += 1; // = sign 1-byte for '='
       size += 4; // 4-byte length
     }
   }
-
+  
   if (size == 0)
   {
     return;
@@ -161,11 +161,11 @@ void Header::write(const M_string& key_vals, boost::shared_array<uint8_t>& buffe
       const std::string& value = it->second;
 
       uint32_t len = key.length() + value.length() + 1;
-      SROS_SERIALIZE_PRIMITIVE(ptr, len);
-      SROS_SERIALIZE_BUFFER(ptr, key.data(), key.length());
+      SROS_SERIALIZE_PRIMITIVE(ptr, len);                       // write len of this frame
+      SROS_SERIALIZE_BUFFER(ptr, key.data(), key.length());     // write key
       static const char equals = '=';
-      SROS_SERIALIZE_PRIMITIVE(ptr, equals);
-      SROS_SERIALIZE_BUFFER(ptr, value.data(), value.length());
+      SROS_SERIALIZE_PRIMITIVE(ptr, equals);                    // write '='
+      SROS_SERIALIZE_BUFFER(ptr, value.data(), value.length()); // writer value
     }
   }
 

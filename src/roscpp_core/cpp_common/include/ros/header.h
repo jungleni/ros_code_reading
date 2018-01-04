@@ -81,7 +81,7 @@ public:
 
 private:
 
-  M_stringPtr read_map_;
+  M_stringPtr read_map_;   // str-str map
 };
 
 }
